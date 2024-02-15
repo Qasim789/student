@@ -14,5 +14,9 @@ class Job extends Model
         'job_title','start_date','end_date','job_type','description'
 
     ];
+
+    /*public function users(){
+        return $this->belongsToMany("App\Http\Controllers\User","")
+    }*/
 }
                     
