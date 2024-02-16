@@ -29,6 +29,8 @@ Route::middleware('guest')->group(function(){
     Route::get('/auth/{provider}/callback', [SocialController::class,'callback']);
 });
 
+Route::get("/excel",[JobController::class,'showExcel'])->name('excel');
+Route::post("/excel",[JobController::class,'postExcel'])->name('excel.post');
 
 Route::middleware('CheckAdmin')->group(function(){
     Route::get("/add-job",[JobController::class,'addJob'])->name('addJob');

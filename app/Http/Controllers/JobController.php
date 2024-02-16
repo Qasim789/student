@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Job;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Imports\UsersImport;
+use App\Models\Order;
+
 class JobController extends Controller
 {
     public function addJob(){
@@ -84,6 +88,67 @@ class JobController extends Controller
         Job::where('job_id',$job_id)->update(['status'=>1]);
         return redirect()->back();
     }
+
+    public function showExcel(){
+        
+        return view('upload_excel');
+    }
+
+    public function postExcel(Request $request){
+        $request->validate([
+            'file'=>'required'
+        ]); 
+
+        $file = $request->file('file');
+
+        $spreadsheet = IOFactory::load($file);
+
+        $worksheet = $spreadsheet->getActiveSheet();
+        $highestRow = $worksheet->getHighestRow();
+        $highestColumn = $worksheet->getHighestColumn();
+
+        
+
+        $data = [];
+        for ($row = 1; $row <= $highestRow; $row++) {
+            $rowData = [];
+            for ($col = 'A'; $col <= $highestColumn; $col++) {
+                
+                $rowData[] = $worksheet->getCell($col . $row)->getValue();
+                
+
+            }
+            if(empty($rowData[count($rowData)-2])){
+                break;
+            }
+            $data[] = $rowData;
+        }
+
+        // Process the data as needed
+        //return response()->json($data);
+        //echo "<pre>";
+        //print_r($data);
+        
+        for($i=1;$i<count($data);$i++){
+            
+            $order = new Order;
+            $order->order_id = $data[$i][0];
+            $order->order_date = $data[$i][1];
+            $order->order_quantity = $data[$i][2];
+            $order->sales = $data[$i][3];
+            $order->ship_method = $data[$i][4];
+            $order->profit = $data[$i][5];
+            $order->unit_price = $data[$i][6];
+            $order->customer_name = $data[$i][7];
+            $order->customer_segment = $data[$i][8];
+            $order->customer_catagory = $data[$i][9];
+            $order->save();
+            
+        }
+
+        return redirect()->back();
+
+        }
 }
 
 
