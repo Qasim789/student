@@ -165,9 +165,10 @@ class JobController extends Controller
 
         $text = (new TesseractOCR($image))->run();
 
+        $sec = str_replace("\n","<br>",$text);
         //return response()->json(['imgdata'=>$text]);
 
-        echo $text;
+        echo $sec;
     }
 }
 
