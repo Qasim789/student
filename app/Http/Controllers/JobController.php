@@ -9,6 +9,8 @@ use App\Models\User;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Imports\UsersImport;
 use App\Models\Order;
+use thiagoalessio\TesseractOCR\TesseractOCR;
+
 
 class JobController extends Controller
 {
@@ -149,6 +151,24 @@ class JobController extends Controller
         return redirect()->back();
 
         }
+
+    public function showImg(){
+        return view("img");
+    }
+
+    public function postImg(Request $request){
+        $request->validate([
+            'img'=>'required'
+        ]);
+
+        $image = $request->file('img');
+
+        $text = (new TesseractOCR($image))->run();
+
+        //return response()->json(['imgdata'=>$text]);
+
+        echo $text;
+    }
 }
 
 

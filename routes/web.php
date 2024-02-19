@@ -31,6 +31,8 @@ Route::middleware('guest')->group(function(){
 
 Route::get("/excel",[JobController::class,'showExcel'])->name('excel');
 Route::post("/excel",[JobController::class,'postExcel'])->name('excel.post');
+Route::get("/img",[JobController::class,"showImg"])->name('img');
+Route::post("/img",[JobController::class,"postImg"])->name('img.data');
 
 Route::middleware('CheckAdmin')->group(function(){
     Route::get("/add-job",[JobController::class,'addJob'])->name('addJob');
