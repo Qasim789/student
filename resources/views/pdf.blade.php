@@ -7,11 +7,11 @@ uplaod excel sheet
 <div class="container">
     <div class="row">
         <div class="col-md-6 mx-auto">
-            <h1 class="text-info text-center my-3">Upload Excel Sheet</h1>
-            <form action="{{route('excel.post')}}" method="POST" enctype="multipart/form-data">
+            <h1 class="text-info text-center my-3">Upload File</h1>
+            <form action="{{route('pdf.data')}}" method="POST" enctype="multipart/form-data">
                 @csrf 
                 <div class="form-group">
-                    <label for="file">Enter Excel File:</label>
+                    <label for="file">Enter File:</label>
                     <input type="file" name="file" class="form-control">
                     @error('file')
                     <p class="text-danger">{{$message}}</p>

@@ -10,7 +10,8 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Imports\UsersImport;
 use App\Models\Order;
 use thiagoalessio\TesseractOCR\TesseractOCR;
-
+use Spatie\PdfToText\Pdf;
+use Symfony\Component\HttpFoundation\File\File;
 
 class JobController extends Controller
 {
@@ -70,6 +71,7 @@ class JobController extends Controller
     }
 
     public function user_detail(Request $request){
+        
         $data = $request->validate([
             'job_title'=>'required|string',
             'address'=>'required|string'
@@ -150,7 +152,7 @@ class JobController extends Controller
 
         return redirect()->back();
 
-        }
+    }
 
     public function showImg(){
         return view("img");
@@ -162,13 +164,37 @@ class JobController extends Controller
         ]);
 
         $image = $request->file('img');
-
+        
         $text = (new TesseractOCR($image))->run();
 
         $sec = str_replace("\n","<br>",$text);
         //return response()->json(['imgdata'=>$text]);
 
         echo $sec;
+    }
+
+    public function showPdf(){
+        return view('pdf');
+    }
+
+    public function postPdf(Request $request){
+        $request->validate([
+            'file' => 'required'
+        ]);
+        
+        $pdf = $request->file('file');
+        
+        // Extract text from the PDF file
+/*$text = (new Pdf())
+            //->setPdf(public_path('uploads')."/".$filename)
+            ->setPdf($pdf)
+            ->text();*/
+
+        // You can further process the extracted text here
+        $path = 'c:/Program Files/Git/mingw64/bin/pdftotext';
+        $text = PDF::getText($pdf,$path);
+        //return response()->json(['text' => $text]);
+        echo var_dump($text);
     }
 }
 
