@@ -119,7 +119,7 @@ NWL Courses
 
 @section('script')
 <script>
-    const add_comment = document.getElementsByClassName('add-comment');
+    /*const add_comment = document.getElementsByClassName('add-comment');
     const show_comment = document.getElementsByClassName("show-comment");
     
     for(let i=0;i<add_comment.length;i++){
@@ -209,7 +209,82 @@ NWL Courses
              
             
         })
-    }
+    }*/
+
+    $(document).ready(function(){
+        $('.add-comment').each(function(index){
+            $(this).on('click',function(){
+                $('.show-comment').eq(index).toggle()
+            })
+            $('.fm').eq(index).on('submit',function(e){
+                e.preventDefault()
+                let comment = $('.comment').eq(index).val()
+                let id = $('.course_id').eq(index).val()
+                let user_id = "{{Auth::user()->user_id}}"
+                let base_url = "{{url('/api')}}"
+                let url = `${base_url}/comment/${id}/${user_id}`
+                let data = JSON.stringify({'comment':comment})
+                $.ajax({
+                    url:url,
+                    type:"POST",
+                    contentType:"application/json",
+                    data:data,
+                    success:function(response){
+                        
+                        $('.comment').eq(index).val("")
+                        getData(index)
+                    },
+                    error:function(xhr,status,error){
+                        console.log(error)
+                    }
+                })
+            })
+        })
+
+        $('.view-comment').each(function(index){
+            $(this).on('click',function(){
+                if($('.comment-container').eq(index).css('display') !== "block"){
+                    $('.comment-container').eq(index).css({'display':'block'})
+                    getData(index)
+                }else{
+                    $('.comment-container').eq(index).css({'display':'none'})
+                }
+                
+            })
+            
+        })
+
+        function getData(index){
+            let id = $('.course_id').eq(index).val()
+            let base_url = "{{url('/api')}}"
+            $.ajax({
+                url:`${base_url}/comment/${id}`,
+                type:'GET',
+                dataType:'json',
+                success:function(data){
+
+                    let show_data = ""     
+                    for(var x in data){
+                        
+                        
+                    show_data += `
+                    <tr>
+                        <td>${data[x]['user'].name}</td>
+                        <td>${data[x].comment_title}</td>
+                    </tr>
+                    `
+                    }
+                
+                $('.comments').eq(index).html(show_data)
+                
+                },
+                error:function(xhr,status,error){
+                    console.log(error)
+                }
+
+            })
+        }
+    })
     
     
 </script>
